@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven' // Ensure this matches your Jenkins Global Tool Configuration name (or remove if mvn is in PATH)
-    }
-
     environment {
         SONAR_HOST_URL = 'http://localhost:9000'
         PROJECT_KEY    = 'leave-service-2024sl70030'
@@ -13,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/MeenakshiSarkar2692/leave-service-2024sl70030.git'
+                git branch: 'main', url: 'https://github.com/MeenakshiSarkar2692/leave-service-2024sl70030.git'
             }
         }
 
