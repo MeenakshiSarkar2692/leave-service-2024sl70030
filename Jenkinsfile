@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Code Inspection') {
+	stage('SonarQube Code Inspection') {
             steps {
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh """
@@ -32,6 +32,7 @@ pipeline {
                           -Dsonar.projectKey=${PROJECT_KEY} \
                           -Dsonar.projectName=${PROJECT_KEY} \
                           -Dsonar.host.url=${SONAR_HOST_URL} \
+                          -Dsonar.login=${SONAR_TOKEN} \
                           -Dsonar.token=${SONAR_TOKEN}
                     """
                 }
