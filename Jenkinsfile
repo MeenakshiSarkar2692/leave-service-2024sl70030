@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+	JAVA_HOME      = '/usr/lib/jvm/java-17-openjdk-17.0.13.0.11-4.el9.x86_64'
         SONAR_HOST_URL = 'http://localhost:9000'
         PROJECT_KEY    = 'leave-service-2024sl70030'
     }
