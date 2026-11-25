@@ -26,18 +26,22 @@ pipeline {
         }
 
 	stage('SonarQube Code Inspection') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh """
-                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                          -Dsonar.projectKey=${PROJECT_KEY} \
-                          -Dsonar.projectName=${PROJECT_KEY} \
-                          -Dsonar.host.url=${SONAR_HOST_URL} \
-                          -Dsonar.login=${SONAR_TOKEN} \
-                          -Dsonar.token=${SONAR_TOKEN}
-                    """
-                }
-            }
-        }
+	    steps {
+		withCredentials([
+        	    string(
+                	credentialsId: 'sonar-token',
+                	variable: 'SONAR_TOKEN'
+            		)
+        	]) {
+            		sh '''
+                		mvn sonar:sonar \
+                  		-Dsonar.projectKey=leave-service-2024SL70030 \
+                  		-Dsonar.host.url=http://localhost:9000 \
+                  		-Dsonar.token="$SONAR_TOKEN"
+            		'''
+        		}
+    		}
+	}
+
     }
 }
