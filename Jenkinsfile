@@ -34,7 +34,7 @@ pipeline {
             		)
         	]) {
             		sh '''
-                		mvn sonar:sonar \
+				mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                   		-Dsonar.projectKey=leave-service-2024SL70030 \
                   		-Dsonar.host.url=http://localhost:9000 \
                   		-Dsonar.token="$SONAR_TOKEN"
