@@ -42,6 +42,48 @@ pipeline {
         		}
     		}
 	}
+stage('Build Docker Image') {
+    steps {
+        sh '''
+            docker build \
+                -t leave-service:${BUILD_NUMBER} \
+                -t leave-service:latest .
+        '''
+    }
+}
 
+stage('Deploy to Staging') {
+    steps {
+        sh '''
+            docker rm -f leave-service-staging || true
+
+            docker run -d \
+                --name leave-service-staging \
+                -p 8085:8080 \
+                -e APP_ENV=staging \
+                leave-service:latest
+        '''
+    }
+}
+
+stage('Verify Staging Deployment') {
+    steps {
+        sh '''
+            echo "Waiting for staging application..."
+
+            for i in $(seq 1 15); do
+                if curl -fsS http://localhost:8085/health; then
+                    echo "Staging deployment successful!"
+                    exit 0
+                fi
+                sleep 2
+            done
+
+            echo "Staging health check failed!"
+            docker logs leave-service-staging
+            exit 1
+        '''
+    }
+}
     }
 }
