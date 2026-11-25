@@ -61,7 +61,7 @@ stage('Deploy to Staging') {
                 --name leave-service-staging \
                 -p 8085:8080 \
                 -e APP_ENV=staging \
-                leave-service:latest
+                leave-service:${BUILD_NUMBER}
         '''
     }
 }
@@ -81,6 +81,45 @@ stage('Verify Staging Deployment') {
 
             echo "Staging health check failed!"
             docker logs leave-service-staging
+            exit 1
+        '''
+    }
+}
+
+stage('Approval for Production') {
+    steps {
+        input message: 'Staging verification successful. Approve deployment to Production?',
+              ok: 'Approve Production Deployment'
+    }
+}
+stage('Deploy to Production') {
+    steps {
+        sh '''
+            docker rm -f leave-service-production || true
+
+            docker run -d \
+                --name leave-service-production \
+                -p 8086:8080 \
+                -e APP_ENV=production \
+                leave-service:${BUILD_NUMBER}
+        '''
+    }
+}
+stage('Verify Production Deployment') {
+    steps {
+        sh '''
+            echo "Checking production application..."
+
+            for i in $(seq 1 15); do
+                if curl -fsS http://localhost:8086/health; then
+                    echo "Production deployment successful!"
+                    exit 0
+                fi
+                sleep 2
+            done
+
+            echo "Production health check failed!"
+            docker logs leave-service-production
             exit 1
         '''
     }
